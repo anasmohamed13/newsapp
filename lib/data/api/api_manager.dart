@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:newsapp/data/model/artical_response.dart';
@@ -17,7 +19,9 @@ abstract class ApiManager {
     if (servreResponse.statusCode >= 200 && servreResponse.statusCode < 300) {
       Map<String, dynamic> json =
           jsonDecode(servreResponse.body) as Map<String, dynamic>;
-      return SourcesResponse.fromJson(json);
+      SourcesResponse response = SourcesResponse.fromJson(json);
+      print("get sources: sources= ${response.sources}");
+      return response;
     } else {
       throw "something went wrong please try later";
     }
