@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:newsapp/data/api/api_manager.dart';
 import 'package:newsapp/data/model/source.dart';
 import 'package:newsapp/data/model/source_response.dart';
-import 'package:newsapp/ui/screen/home/tabs/news_list.dart';
+import 'package:newsapp/ui/screen/home/tabs/news_tab/news_list.dart';
 import 'package:newsapp/ui/widget/error_view.dart';
 import 'package:newsapp/ui/widget/loading_view.dart';
 
