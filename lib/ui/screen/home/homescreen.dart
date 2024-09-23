@@ -1,5 +1,10 @@
+// ignore_for_file: avoid_print, deprecated_member_use
+
 import 'package:flutter/material.dart';
+import 'package:newsapp/data/model/category.dart';
 import 'package:newsapp/ui/screen/home/tabs/category/categories_tab.dart';
+import 'package:newsapp/ui/screen/home/tabs/news_tab/tabs_list.dart';
+import 'package:newsapp/ui/screen/home/tabs/settings/settings.dart';
 
 class Homescreen extends StatefulWidget {
   static const String routeName = "home";
@@ -10,15 +15,40 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
+  late Widget currentTab;
+  @override
+  void initState() {
+    currentTab = CategoriesTab(onCategoryClick);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        appBar: buildAppBar(),
-        drawer: buildDrawer(),
-        body: const CategoriesTab(),
+      child: WillPopScope(
+        onWillPop: () async {
+          if (currentTab is CategoriesTab) {
+            return true;
+          } else {
+            CategoriesTab(onCategoryClick);
+            setState(() {});
+            return false;
+          }
+        },
+        child: Scaffold(
+          appBar: buildAppBar(),
+          drawer: buildDrawer(),
+          body: currentTab,
+        ),
       ),
     );
+  }
+
+  void onCategoryClick(Category category) {
+    currentTab = TabsList(
+      categoryId: category.backEndId,
+    );
+    setState(() {});
   }
 
   Widget buildDrawerRow(
@@ -70,12 +100,25 @@ class _HomescreenState extends State<Homescreen> {
               height: 8,
             ),
             buildDrawerRow(
-                title: "categories", iconData: Icons.list, onClick: () {}),
+                title: "categories",
+                iconData: Icons.list,
+                onClick: () {
+                  currentTab = CategoriesTab(onCategoryClick);
+                  Navigator.pop(context);
+                  setState(() {});
+                }),
             const SizedBox(
               height: 8,
             ),
             buildDrawerRow(
-                title: "settings", iconData: Icons.settings, onClick: () {}),
+                title: "settings",
+                iconData: Icons.settings,
+                onClick: () {
+                  currentTab = const Settings();
+                  Navigator.pop(context);
+
+                  setState(() {});
+                }),
           ],
         ),
       );

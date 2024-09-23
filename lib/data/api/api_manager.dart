@@ -12,9 +12,9 @@ abstract class ApiManager {
   static const String _sourcesEndPoint = "/v2/top-headlines/sources";
   static const String _articalsEndPoint = "/v2/everything";
 
-  static Future<SourcesResponse> getSoucres() async {
-    Response servreResponse =
-        await get(Uri.parse('$_baseUrl$_sourcesEndPoint?apiKey=$_apiKey'));
+  static Future<SourcesResponse> getSoucres(String category) async {
+    Response servreResponse = await get(Uri.parse(
+        '$_baseUrl$_sourcesEndPoint?apiKey=$_apiKey&category=$category'));
 
     if (servreResponse.statusCode >= 200 && servreResponse.statusCode < 300) {
       Map<String, dynamic> json =
