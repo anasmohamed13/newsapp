@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:newsapp/data/api/api_manager.dart';
 import 'package:newsapp/data/model/source.dart';
-import 'package:newsapp/data/model/source_response.dart';
 import 'package:newsapp/ui/screen/home/tabs/news_tab/news_list.dart';
+import 'package:newsapp/ui/screen/home/tabs/news_tab/tabs_list_view_model.dart';
 import 'package:newsapp/ui/widget/error_view.dart';
 import 'package:newsapp/ui/widget/loading_view.dart';
+import 'package:provider/provider.dart';
 
 class TabsList extends StatefulWidget {
   final String categoryId;
@@ -15,25 +15,39 @@ class TabsList extends StatefulWidget {
 }
 
 class _TabsListState extends State<TabsList> {
+  TabsListViewModel viewModel = TabsListViewModel();
   int selectedTabIndex = 0;
   @override
+  void initState() {
+    super.initState();
+    viewModel.getSources(widget.categoryId);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<SourcesResponse>(
-      future: ApiManager.getSoucres(widget.categoryId),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return ErrorView(
-            error: snapshot.error.toString(),
-            onRetryClick: () {},
-          );
-        } else if (snapshot.hasData) {
-          return buildTabsList(snapshot.data!.sources!);
+    return ChangeNotifierProvider(
+      create: (context) => viewModel,
+      builder: (context, _) {
+        viewModel = Provider.of(context, listen: true);
+        if (viewModel.sources != null) {
+          return buildTabsList(viewModel.sources!);
+        } else if (viewModel.errorMessage != null) {
+          return ErrorView(error: viewModel.errorMessage!, onRetryClick: () {});
         } else {
           return const LoadingView();
         }
       },
     );
   }
+
+  /// if (snapshot.hasError) {
+  /// return ErrorView(
+  ///  error: snapshot.error.toString(), onRetryClick: () {},);
+  ///  } else if (snapshot.hasData) {
+  /// return buildTabsList(snapshot.data!.sources!);
+  /// } else {
+  ///   return const LoadingView();
+  // }
 
   Widget buildTabsList(List<Source> sources) {
     List<Widget> tabs = sources

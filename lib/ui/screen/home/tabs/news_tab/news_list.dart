@@ -39,7 +39,9 @@ class NewsList extends StatelessWidget {
     return Column(
       children: [
         Image.network(artical.urlToImage ?? ""),
-        Text(artical.source?.name ?? ""),
+        Text(
+          artical.source?.name ?? "",
+        ),
         Text(artical.title ?? ""),
         Text(artical.publishedAt ?? ""),
       ],

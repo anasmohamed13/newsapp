@@ -24,7 +24,7 @@ class Category {
     Category(
         backEndId: "technology",
         title: "Technology",
-        imagePath: "assets/Politics.png",
+        imagePath: "assets/technology.png",
         isLeftSided: false,
         backgroundColor: Colors.blue[900]!),
     Category(
@@ -42,7 +42,7 @@ class Category {
     Category(
         backEndId: "entertainment",
         title: "Entertainment",
-        imagePath: "assets/environment.png",
+        imagePath: "assets/entertainment.png",
         isLeftSided: true,
         backgroundColor: Colors.lightBlue),
     Category(
