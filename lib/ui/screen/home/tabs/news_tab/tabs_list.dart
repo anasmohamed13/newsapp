@@ -1,10 +1,13 @@
+// ignore_for_file: avoid_types_as_parameter_names, non_constant_identifier_names
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsapp/data/model/source.dart';
+import 'package:newsapp/ui/base/base_api_state.dart';
 import 'package:newsapp/ui/screen/home/tabs/news_tab/news_list.dart';
 import 'package:newsapp/ui/screen/home/tabs/news_tab/tabs_list_view_model.dart';
 import 'package:newsapp/ui/widget/error_view.dart';
 import 'package:newsapp/ui/widget/loading_view.dart';
-import 'package:provider/provider.dart';
 
 class TabsList extends StatefulWidget {
   final String categoryId;
@@ -15,7 +18,7 @@ class TabsList extends StatefulWidget {
 }
 
 class _TabsListState extends State<TabsList> {
-  TabsListViewModel viewModel = TabsListViewModel();
+  TabsListcubit viewModel = TabsListcubit();
   int selectedTabIndex = 0;
   @override
   void initState() {
@@ -25,17 +28,21 @@ class _TabsListState extends State<TabsList> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => viewModel,
-      builder: (context, _) {
-        viewModel = Provider.of(context, listen: true);
-        if (viewModel.sources != null) {
-          return buildTabsList(viewModel.sources!);
-        } else if (viewModel.errorMessage != null) {
-          return ErrorView(error: viewModel.errorMessage!, onRetryClick: () {});
-        } else {
+    return BlocBuilder<TabsListcubit, TabsListState>(
+      bloc: viewModel,
+      builder: (context, State) {
+        if (State.tabsListApistate is LoadingApiStaet) {
           return const LoadingView();
+        } else if (State.tabsListApistate is SuccessApiStaet<List<Source>>) {
+          List<Source> sources =
+              (State.tabsListApistate as SuccessApiStaet<List<Source>>).data;
+          return buildTabsList(sources);
+        } else if (State.tabsListApistate is ErrorApiStaet) {
+          String errMessage =
+              (State.tabsListApistate as ErrorApiStaet).errMessage;
+          return ErrorView(error: errMessage, onRetryClick: () {});
         }
+        return const LoadingView();
       },
     );
   }
